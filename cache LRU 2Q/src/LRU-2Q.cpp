@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../include/LRU-2Q.hpp"
+#include "LRU-2Q.hpp"
 
 struct cacheList {
     List lst;
@@ -19,9 +19,20 @@ int count_hits (const char* testName) {
 
     fscanf(testFile, "%d", &lst.listSize);
     
-    while (fscanf(testFile, "%d", &page) != EOF) {
+    while (fscanf(testFile, "%d", &page) == 1) {
         new_page(&map, &lst, page, &hits);
     }
+    
+    int result = 0;
+    fscanf(testFile, "answer - %d", &result);
+    
+    if (result == hits) {
+        printf("SUCCESS\n");
+    }
+    else {
+        printf("FAILED");
+    }
+
     return hits;
 }
 
