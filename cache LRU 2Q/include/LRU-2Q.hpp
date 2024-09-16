@@ -1,11 +1,21 @@
+#ifndef LRU_2Q_H
+#define LRU_2Q_H
+
 #include <unordered_map>
 #include <list>
 
+typedef int TPage;
+
 using namespace std;
 
-typedef list<int> List;
-typedef unordered_map<int, List::iterator> Hashtable;
+// template<typename Page>
+typedef list<TPage> ListIn;
+typedef list<TPage> ListOut;
 
-void list_dump (List lst);
+// template<typename Page>
+typedef unordered_map<TPage, ListIn::iterator> HashtableIn;
+typedef unordered_map<TPage, ListOut::iterator> HashtableOut; // return pointer
 
-int count_hits (const char* testName);
+int count_hits_2Q (const char* testName);
+
+#endif // LRU_2Q_H

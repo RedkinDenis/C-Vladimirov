@@ -18,11 +18,10 @@ include_directories(${INCLUDE_DIR})
 SET(SRCS
     # src/main.cpp
     src/LRU-2Q.cpp
+    # src/LRU.cpp
 )
 
 add_library(lru2Q STATIC ${SRCS})
-# target_include_directories(lru2Q PUBLIC "include")
-# target_link_libraries(lru2Q PUBLIC "include")
 
 add_executable(lru.x main.cpp)
 target_link_libraries(lru.x lru2Q)
