@@ -45,6 +45,7 @@ int count_hits_2Q () {
     
     for (int i = 0; i < pageCount; i++) {
 
+        scanf("%d", &page);
         new_page_2Q(hashTables, lists, page, hits);
         // printf("\nam: %d %d\nin: %d %d\nout: %d %d\n\n",  *lists.lstAm.lst.begin(),    lists.lstAm.lst.back(),
         //                                                   *lists.lstA1In.lst.begin(),  lists.lstA1In.lst.back(),
