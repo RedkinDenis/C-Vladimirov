@@ -63,7 +63,7 @@ void new_page (TPage* pages, int currentPageNumber, int numberOfPages, Hashtable
 
             TPage latestPage = find_latest_page(pages, currentPageNumber, numberOfPages, map);
 
-            if (latestPage == 0) {
+            if (latestPage == -1) {
                 
                 lst.lst.pop_back();
                 map.erase(lst.lst.back());
@@ -85,7 +85,7 @@ void new_page (TPage* pages, int currentPageNumber, int numberOfPages, Hashtable
 
 TPage find_latest_page (TPage* pages, int currentPageNumber, int numberOfPages, Hashtable & map) {
 
-    TPage latestPage = 0;
+    TPage latestPage = -1;
     for (int i = currentPageNumber + 1; i++; i < numberOfPages) {
 
         if (map.count(pages[i]) != 0) {
