@@ -25,9 +25,9 @@ struct Q2HashTables {
 
 static void new_page_2Q (Q2HashTables & map, Q2Lists & lst, TPage elem, int & hits);
 
-int count_hits_2Q (const char* testName) {
+int count_hits_2Q () {
 
-    FILE* testFile = fopen(testName, "rb");
+    // FILE* testFile = fopen(testName, "rb");
 
     TPage page = 0;
     int hits = 0;
@@ -36,11 +36,14 @@ int count_hits_2Q (const char* testName) {
     Q2HashTables hashTables;    
 
     int cacheSize = 0;
-    fscanf(testFile, "%d", &cacheSize);
+    scanf("%d", &cacheSize);
+
+    int pageCount = 0;
+    scanf("%d", &pageCount);
 
     lists.set_lists_size(cacheSize);
     
-    while (fscanf(testFile, "%d", &page) == 1) {
+    for (int i = 0; i < pageCount; i++) {
 
         new_page_2Q(hashTables, lists, page, hits);
         // printf("\nam: %d %d\nin: %d %d\nout: %d %d\n\n",  *lists.lstAm.lst.begin(),    lists.lstAm.lst.back(),
@@ -48,29 +51,29 @@ int count_hits_2Q (const char* testName) {
         //                                                   *lists.lstA1Out.lst.begin(), lists.lstA1Out.lst.back());
     }
     
-    int result = 0;
-    fscanf(testFile, "answer - %d", &result);
+    // int result = 0;
+    // fscanf(testFile, "answer - %d", &result);
     
-    if (result == hits) {
-        printf("SUCCESS hits - %d\n", hits);
-    }
-    else {
-        printf("FAILED hits - %d\n", hits);
-    }
+    // if (result == hits) {
+    //     printf("SUCCESS hits - %d\n", hits);
+    // }
+    // else {
+    //     printf("FAILED hits - %d\n", hits);
+    // }
 
     return hits;
 }
 
 void new_page_2Q (Q2HashTables & map, Q2Lists & lst, TPage elem, int & hits) {
 
-    printf("elem - %d ", elem);
+    // printf("elem - %d ", elem);
     if (map.mapAm.count(elem) == 0) { 
 
         if (map.mapIn.count(elem) == 0) {
 
             if (map.mapOut.count(elem) == 0) {
             
-                printf("PUSH TO IN ");
+                // printf("PUSH TO IN ");
                 if (lst.lstA1In.listSize == lst.lstA1In.lst.size()) {
 
                     if (lst.lstA1Out.lst.size() == lst.lstA1Out.listSize) {
@@ -79,7 +82,7 @@ void new_page_2Q (Q2HashTables & map, Q2Lists & lst, TPage elem, int & hits) {
                         lst.lstA1Out.lst.pop_back();
                     }
 
-                    printf("MOVE FROM IN TO OUT ");
+                    // printf("MOVE FROM IN TO OUT ");
                     lst.lstA1Out.lst.push_front(lst.lstA1In.lst.back());
                     map.mapOut.insert({lst.lstA1In.lst.back(), lst.lstA1Out.lst.begin()});
 
@@ -92,7 +95,7 @@ void new_page_2Q (Q2HashTables & map, Q2Lists & lst, TPage elem, int & hits) {
 
             else {
 
-                printf("MOVE FROM OUT TO AM ");
+                // printf("MOVE FROM OUT TO AM ");
 
                 lst.lstA1Out.lst.erase(map.mapOut.find(elem)->second);
                 map.mapOut.erase(elem);
@@ -112,7 +115,7 @@ void new_page_2Q (Q2HashTables & map, Q2Lists & lst, TPage elem, int & hits) {
 
             hits += 1;
 
-            printf("MOVE FROM IN TO IN ");
+            // printf("MOVE FROM IN TO IN ");
 
             lst.lstA1In.lst.erase(map.mapIn.find(elem)->second);
             map.mapIn.erase(elem);
@@ -126,7 +129,7 @@ void new_page_2Q (Q2HashTables & map, Q2Lists & lst, TPage elem, int & hits) {
 
         hits += 1;
 
-        printf("MOVE FROM AM TO AM ");
+        // printf("MOVE FROM AM TO AM ");
 
         lst.lstAm.lst.erase(map.mapAm.find(elem)->second);
         map.mapAm.erase(elem);

@@ -3,6 +3,6 @@
 
 typedef int TPage;
 
-int count_hits_2Q (const char* testName);
+int count_hits_2Q ();
 
 #endif // LRU_2Q_H

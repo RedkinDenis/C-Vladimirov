@@ -24,11 +24,6 @@ TPage* get_data (int* numberOfPages) {
         scanf("%d", &pages[i]);
     }
 
-    for (int i = 0; i < *numberOfPages; i++) {
-
-        printf("%d", pages[i]);
-    }
-
     return pages;
 }
 
@@ -50,13 +45,13 @@ int count_hits_Ideal_cache () {
         new_page(pages, i, numberOfPages, hashTable, lst, hits);
     }
 
-    printf("hits - %d\n", hits);
+    // printf("hits - %d\n", hits);
     return hits;
 }
 
 void new_page (TPage* pages, int currentPageNumber, int numberOfPages, Hashtable & map, cacheList & lst, int & hits) {
 
-    printf("\nelem - %d\n", pages[currentPageNumber]);
+    // printf("\nelem - %d\n", pages[currentPageNumber]);
     if (map.count(pages[currentPageNumber]) == 0) {
 
         if (lst.lst.size() < lst.listSize) {
