@@ -1,26 +1,30 @@
 #include <iostream>
 #include "LRU-2Q.hpp"
 
-struct cacheListIn {
-    ListIn lst;
-    size_t listSize = 0;
-};
-
-struct cacheListOut {
-    ListOut lst;
+struct cacheList {
+    List lst;
     size_t listSize = 0;
 };
 
 struct Q2Lists {
-    cacheListIn lstAm;
-    cacheListIn lstA1In;
-    cacheListOut lstA1Out;
+    cacheList lstAm;
+    cacheList lstA1In;
+    cacheList lstA1Out;
+
+    inline void set_lists_size (size_t cacheSize) {
+
+        lstAm.listSize = cacheSize / 2;        
+        lstA1In.listSize = (cacheSize - lstAm.listSize) / 2;
+        lstA1Out.listSize = cacheSize - lstAm.listSize - lstA1In.listSize;
+
+        // printf ("\nAmSize - %d INSize - %d OutSize - %d\n", lstAm.listSize, lstA1In.listSize, lstA1Out.listSize);
+    }
 };
 
 struct Q2HashTables {
-    HashtableIn mapAm;
-    HashtableIn mapIn;
-    HashtableOut mapOut;
+    Hashtable mapAm;
+    Hashtable mapIn;
+    Hashtable mapOut;
 };
 
 static void new_page_2Q (Q2HashTables & map, Q2Lists & lst, TPage elem, int & hits);
@@ -35,15 +39,17 @@ int count_hits_2Q (const char* testName) {
     Q2Lists lists;
     Q2HashTables hashTables;    
 
-    int cache_size = 0;
-    fscanf(testFile, "%d", &cache_size);
+    int cacheSize = 0;
+    fscanf(testFile, "%d", &cacheSize);
 
-    lists.lstA1In.listSize = cache_size / 4;
-    lists.lstA1Out.listSize = cache_size / 4;
-    lists.lstAm.listSize = cache_size / 2;
+    lists.set_lists_size(cacheSize);
     
     while (fscanf(testFile, "%d", &page) == 1) {
+
         new_page_2Q(hashTables, lists, page, hits);
+        // printf("\nam: %d %d\nin: %d %d\nout: %d %d\n\n",  *lists.lstAm.lst.begin(),    lists.lstAm.lst.back(),
+        //                                                   *lists.lstA1In.lst.begin(),  lists.lstA1In.lst.back(),
+        //                                                   *lists.lstA1Out.lst.begin(), lists.lstA1Out.lst.back());
     }
     
     int result = 0;
@@ -77,8 +83,9 @@ void new_page_2Q (Q2HashTables & map, Q2Lists & lst, TPage elem, int & hits) {
                         lst.lstA1Out.lst.pop_back();
                     }
 
+                    printf("MOVE FROM IN TO OUT ");
                     lst.lstA1Out.lst.push_front(lst.lstA1In.lst.back());
-                    map.mapOut.insert({elem, lst.lstA1Out.lst.begin()});
+                    map.mapOut.insert({lst.lstA1In.lst.back(), lst.lstA1Out.lst.begin()});
 
                     map.mapIn.erase(lst.lstA1In.lst.back());
                     lst.lstA1In.lst.pop_back();
