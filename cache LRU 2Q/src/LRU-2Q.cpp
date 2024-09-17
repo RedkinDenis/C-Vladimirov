@@ -1,10 +1,6 @@
 #include <iostream>
 #include "LRU-2Q.hpp"
-
-struct cacheList {
-    List lst;
-    size_t listSize = 0;
-};
+#include "containers.hpp"
 
 struct Q2Lists {
     cacheList lstAm;
