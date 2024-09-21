@@ -16,6 +16,7 @@ include_directories(${INCLUDE_DIR})
 # include_directories(${TEST_DIR})
 
 SET(SRCS1
+    src/LRU.cpp
     src/LRU-2Q.cpp
 )
 

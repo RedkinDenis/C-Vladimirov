@@ -6,8 +6,6 @@ struct cacheList {
     size_t listSize = 0;
 };
 
-static void new_page_LRU (Hashtable & map, cacheList & lst, int elem, int & hits);
-
 int count_hits_LRU (const char* testName) {
 
     FILE* testFile = fopen(testName, "rb");

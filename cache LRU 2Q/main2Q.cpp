@@ -3,5 +3,5 @@
 
 int main() {
     
-    printf("%d", count_hits_2Q());
+    printf("%d\n", count_hits_2Q());
 }

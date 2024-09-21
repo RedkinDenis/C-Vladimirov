@@ -1,5 +1,6 @@
 #include <iostream>
 #include "LRU-2Q.hpp"
+#include "LRU.hpp"
 #include "containers.hpp"
 
 struct Q2Lists {
@@ -9,11 +10,17 @@ struct Q2Lists {
 
     inline void set_lists_size (size_t cacheSize) {
 
-        lstAm.listSize = cacheSize / 2;        
-        lstA1In.listSize = (cacheSize - lstAm.listSize) / 2;
-        lstA1Out.listSize = cacheSize - lstAm.listSize - lstA1In.listSize;
+        if (cacheSize > 3) {
+            
+            lstAm.listSize = cacheSize / 2;        
+            lstA1In.listSize = (cacheSize - lstAm.listSize) / 2;
+            lstA1Out.listSize = cacheSize - lstAm.listSize - lstA1In.listSize;
+        }
+        else {
 
-        // printf ("\nAmSize - %d INSize - %d OutSize - %d\n", lstAm.listSize, lstA1In.listSize, lstA1Out.listSize);
+            lstAm.listSize = cacheSize;
+        }
+        printf ("\nAmSize - %d INSize - %d OutSize - %d\n", lstAm.listSize, lstA1In.listSize, lstA1Out.listSize);
     }
 };
 
@@ -43,24 +50,24 @@ int count_hits_2Q () {
 
     lists.set_lists_size(cacheSize);
     
-    for (int i = 0; i < pageCount; i++) {
 
-        scanf("%d", &page);
-        new_page_2Q(hashTables, lists, page, hits);
-        // printf("\nam: %d %d\nin: %d %d\nout: %d %d\n\n",  *lists.lstAm.lst.begin(),    lists.lstAm.lst.back(),
-        //                                                   *lists.lstA1In.lst.begin(),  lists.lstA1In.lst.back(),
-        //                                                   *lists.lstA1Out.lst.begin(), lists.lstA1Out.lst.back());
+    if (cacheSize > 3) {
+
+        for (int i = 0; i < pageCount; i++) {
+
+            scanf("%d", &page);
+            new_page_2Q(hashTables, lists, page, hits);
+        }
     }
-    
-    // int result = 0;
-    // fscanf(testFile, "answer - %d", &result);
-    
-    // if (result == hits) {
-    //     printf("SUCCESS hits - %d\n", hits);
-    // }
-    // else {
-    //     printf("FAILED hits - %d\n", hits);
-    // }
+
+    else {
+
+        for (int i = 0; i < pageCount; i++) {
+
+            scanf("%d", &page);
+            new_page_LRU(hashTables.mapAm, lists.lstAm, page, hits);
+        }
+    }
 
     return hits;
 }
