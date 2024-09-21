@@ -38,11 +38,14 @@ int count_hits_LRU (const char* testName) {
 void new_page_LRU (Hashtable & map, cacheList & lst, int elem, int & hits) {
     
     if (map.count(elem) == 0)  {
-        if (lst.lst.size() > lst.listSize) {
+        if (lst.lst.size() == lst.listSize) {
+
+            map.erase(lst.lst.back());
             lst.lst.pop_back();
         }
     }
     else {
+        
         hits += 1;
 
         lst.lst.erase(map.find(elem)->second);

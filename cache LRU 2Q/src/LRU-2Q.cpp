@@ -20,7 +20,7 @@ struct Q2Lists {
 
             lstAm.listSize = cacheSize;
         }
-        printf ("\nAmSize - %d INSize - %d OutSize - %d\n", lstAm.listSize, lstA1In.listSize, lstA1Out.listSize);
+        // printf ("\nAmSize - %d INSize - %d OutSize - %d\n", lstAm.listSize, lstA1In.listSize, lstA1Out.listSize);
     }
 };
 
@@ -33,8 +33,6 @@ struct Q2HashTables {
 static void new_page_2Q (Q2HashTables & map, Q2Lists & lst, TPage elem, int & hits);
 
 int count_hits_2Q () {
-
-    // FILE* testFile = fopen(testName, "rb");
 
     TPage page = 0;
     int hits = 0;
@@ -145,5 +143,4 @@ void new_page_2Q (Q2HashTables & map, Q2Lists & lst, TPage elem, int & hits) {
         lst.lstAm.lst.push_front(elem);
         map.mapAm.insert({elem, lst.lstAm.lst.begin()});
     }
-    printf("\n");
 }

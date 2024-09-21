@@ -3,5 +3,5 @@
 
 int main() {
 
-    printf("%d", count_hits_Ideal_cache());
+    printf("%d\n", count_hits_Ideal_cache());
 }
