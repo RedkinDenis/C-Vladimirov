@@ -4,7 +4,9 @@
 #include <cmath>
 #include <stdio.h>
 
-static float flt_tolerance = 1e-6;
+static float flt_tolerance = 0.1;
+
+bool isZero (float x);
 
 enum CrossType {
 
@@ -14,19 +16,13 @@ enum CrossType {
     NOT_CROSS = 4
 };
 
-CrossType lines_cross_point (line_t &line1, line_t &line2, point_t &crossP);
-
-bool is_point_in_interval (point_t &p, point_t &pA, point_t &pB);
-
-bool is_num_in_internal (float &x, float &a, float &b);
-
 struct point_t {
     
     float x = NAN, y = NAN, z = NAN;
     
     point_t () {;}
     
-    point_t (float setX, float setY, float setZ)/*: x(setX), y(setY), z(setZ)*/ {
+    point_t (float setX, float setY, float setZ) /*: x(setX), y(setY), z(setZ)*/ {
 
         x = setX; y = setY; z = setZ;
     }
@@ -49,13 +45,14 @@ struct point_t {
         return result;
     }
 
-    point_t operator*(const int &num) const {
+    point_t operator*(const float &num) const {
 
         point_t result = point_t(x * num, y * num, z * num);
         return result;
     }
 };
 
+// line_t -- zeroPoint + mu * directionVector
 struct line_t {
  
     point_t zeroPoint;
@@ -77,7 +74,9 @@ struct line_t {
     
     void print() const {
 
-        printf("a - %f b -%f c - %f", zeroPoint.x, zeroPoint.y, zeroPoint.z);
+        printf("\nzeropoint(%f, %f, %f)\n"
+               "dirVector(%f, %f, %f)\n", zeroPoint.x, zeroPoint.y, zeroPoint.z,
+                                          directionVector.x, directionVector.y, directionVector.z);
     };
  
     // bool valid() const;
@@ -92,31 +91,51 @@ struct linear_equation {
 
     linear_equation (float setA, float setB, float setC, float setD) : a(setA), b(setB), c(setC), d(setD) {}
 
+    void dump () const {
+
+        printf("\nLINEAR EQ DUMP\n"
+               "a - %f b - %f c - %f d - %f\n", a, b, c, d);
+    }
+
     linear_equation operator- (const linear_equation rhs) const {
 
         linear_equation res(a - rhs.a, b - rhs.b, c - rhs.c, d - rhs.d);
+        // res.dump();
         return res;
     }
 
     linear_equation operator* (const float num) const {
 
         linear_equation res(a * num, b * num, c * num, d * num);
+        // res.dump();
         return res;
+    }
+
+    float find_proportional (const linear_equation &eq) const {
+
+        if (a != 0.f && eq.a != 0.f) return a / eq.a;
+        if (b != 0.f && eq.b != 0.f) return b / eq.b;
+        if (c != 0.f && eq.c != 0.f) return c / eq.c;
+        if (d != 0.f && eq.d != 0.f) return d / eq.d;
+        return 1;
     }
 
     bool is_match (const linear_equation &eq) {
         
-        linear_equation eq_t = eq - *this * (eq.a / a); 
-        return  eq_t.a < flt_tolerance && eq_t.b < flt_tolerance && eq_t.c < flt_tolerance && eq_t.d < flt_tolerance;
+        linear_equation eq_t = eq - *this * eq.find_proportional(*this); 
+
+        // eq.dump(); this->dump(); eq_t.dump();
+        return  isZero(eq_t.a) && isZero(eq_t.b) && isZero(eq_t.c) && isZero(eq_t.d);
     }
 
     bool is_parallel (const linear_equation &eq) {
         
-        linear_equation eq_t = eq - *this * (eq.a / a); 
-        return  eq_t.a < flt_tolerance && eq_t.b < flt_tolerance && eq_t.c < flt_tolerance;
+        linear_equation eq_t = eq - *this * eq.find_proportional(*this); 
+        return  isZero(eq_t.a) && isZero(eq_t.b) && isZero(eq_t.c);
     }
 };
 
+// surface_t -- ax + by + cz + d = 0;
 struct surface_t {
 
     float a = -1.0f, b = 1.0f, c = 0.0f, d = 0.0f;   
@@ -131,7 +150,15 @@ struct surface_t {
         d( - a * p1.x - b * p1.y - c * p1.z )
         {}
 
+    void dump () {
+
+        printf("\na - %f b - %f c - %f d - %f\n", a, b, c, d);
+    }
 };
+
+CrossType lines_cross_point (line_t &line1, line_t &line2, point_t &crossP);
+
+bool is_point_in_interval (point_t &p, point_t &pA, point_t &pB);
 
 struct triangle_t {
 
@@ -187,6 +214,17 @@ struct triangle_t {
         #undef CROSS_WITH_LINE
         return false;
     }
+
+    void dump () {
+
+        A.print(); B.print(); C.print();
+        AB.print(); BC.print(); AC.print(); 
+        surfABC.dump();
+    }
 };
+
+bool is_num_in_internal (float &x, float &a, float &b);
+
+bool is_triangles_cross (triangle_t &t1, triangle_t &t2);
 
 #endif // GEOMETRY_ELEMS_HPP
