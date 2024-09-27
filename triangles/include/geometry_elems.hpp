@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <stdio.h>
+#include <cassert>
 
 static float flt_tolerance = 0.1;
 
@@ -32,7 +33,11 @@ struct point_t {
         printf("\nx - %f y - %f z - %f\n", x, y, z);
     }
     
-    // bool valid() const;
+    bool valid() const {
+
+        assert(!std::isnan(x) && !std::isnan(y) && !std::isnan(z));
+        return true;
+    }
     
     bool equal (const point_t &rhs) const {
 
@@ -79,7 +84,10 @@ struct line_t {
                                           directionVector.x, directionVector.y, directionVector.z);
     };
  
-    // bool valid() const;
+    bool valid() const {
+
+        return zeroPoint.valid() && directionVector.valid();
+    }
 };
 
 // surface_t -- surface from ax + by + cz + d = 0;
@@ -181,37 +189,66 @@ struct triangle_t {
         surfABC = surfABCcp;
     }
 
-    bool cross_with_line (line_t &line) {
+    bool cross_with_line (line_t &line, std::pair<point_t, point_t> &crossPoints) {
 
+        // printf("\ncross triangle with line\n");
+        
         bool result;
+
+        // point_t nanP(NAN, NAN, NAN);
+        // std::pair<point_t, point_t> crossPoints;
+        int i = 0;
 
         point_t crossPoint;
         CrossType lineCrossType;
 
-        #define CROSS_WITH_LINE(A, B, AB)                                   \
+        #define CROSS_WITH_LINE(pA, pB, lAB)                                \
                                                                             \
-        lineCrossType = lines_cross_point(line, AB, crossPoint);            \
+        lineCrossType = lines_cross_point(line, lAB, crossPoint);           \
                                                                             \
         if (lineCrossType == MATCH) {                                       \
                                                                             \
+            crossPoints = {pA, pB};                                         \
             return true;                                                    \
         }                                                                   \
                                                                             \
         if (lineCrossType == CROSS) {                                       \
                                                                             \
-            result = is_point_in_interval(crossPoint, A, B);                \
+            result = is_point_in_interval(crossPoint, pA, pB);              \
                                                                             \
             if (result == true) {                                           \
                                                                             \
-                return true;                                                \
+                if (i == 0) {                                               \
+                                                                            \
+                    crossPoints.first = crossPoint;                         \
+                    i++;                                                    \
+                }                                                           \
+                else if (i == 1) {                                          \
+                    i++;                                                    \
+                    crossPoints.second = crossPoint;                        \
+                }                                                           \
             }                                                               \
-        }
+        }                                                                   \
 
         CROSS_WITH_LINE(A, B, AB)
         CROSS_WITH_LINE(B, C, BC)
         CROSS_WITH_LINE(A, C, AC)
 
         #undef CROSS_WITH_LINE
+
+
+        // printf("\nCROSS POINTS DUMP---------------\n");
+        // crossPoints.first.print();
+        // crossPoints.second.print();
+        // printf("\ni - %d\n", i);
+        // printf("\nCROSS POINT DUMP END------------\n");
+
+
+        if (i != 0) {
+
+            return true;
+        }
+
         return false;
     }
 
