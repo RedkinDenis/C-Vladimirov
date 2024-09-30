@@ -1,7 +1,9 @@
 #include "ideal_cache.hpp"
 #include <iostream>
 
+using namespace std;
+
 int main() {
 
-    printf("%d\n", count_hits_Ideal_cache());
+    cout << count_hits_Ideal_cache() << endl;
 }

@@ -1,7 +1,9 @@
 #include "LRU-2Q.hpp"
 #include <iostream>
 
+using namespace std;
+
 int main() {
     
-    printf("%d\n", count_hits_2Q());
+    cout << count_hits_2Q() << endl;
 }

@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
 #include <containers.hpp>
 #include <ideal_cache.hpp>
@@ -13,15 +13,18 @@ static void new_page (TPage* pages, int currentPageNumber, int numberOfPages, Ha
 
 static TPage find_latest_page (TPage* pages, int currentPageNumber, int numberOfPages, Hashtable & map);
 
+bool seek_in_future (TPage* pages, int currentPageNumber, int numberOfPages, size_t listSize);
+
+using namespace std;
 
 TPage* get_data (int* numberOfPages) {
 
-    scanf("%d", numberOfPages);
+    cin >> *numberOfPages;
 
     TPage* pages = (TPage*)calloc(*numberOfPages, sizeof(TPage));
     for (int i = 0; i < *numberOfPages; i++) {
 
-        scanf("%d", &pages[i]);
+        cin >> pages[i];
     }
 
     return pages;
@@ -34,7 +37,7 @@ int count_hits_Ideal_cache () {
     cacheList lst;
     Hashtable hashTable;
 
-    scanf("%d", &lst.listSize);
+    cin >> lst.listSize;
     int numberOfPages = 0;
     TPage* pages = get_data(&numberOfPages);
 
@@ -52,6 +55,12 @@ int count_hits_Ideal_cache () {
 void new_page (TPage* pages, int currentPageNumber, int numberOfPages, Hashtable & map, cacheList & lst, int & hits) {
 
     // printf("\nelem - %d\n", pages[currentPageNumber]);
+    if (lst.lst.size() == lst.listSize && 
+        seek_in_future(pages, currentPageNumber, numberOfPages, lst.listSize) == false &&
+        map.count(pages[currentPageNumber]) == 0) {
+        return;
+    }
+
     if (map.count(pages[currentPageNumber]) == 0) {
 
         if (lst.lst.size() < lst.listSize) {
@@ -86,7 +95,7 @@ void new_page (TPage* pages, int currentPageNumber, int numberOfPages, Hashtable
 TPage find_latest_page (TPage* pages, int currentPageNumber, int numberOfPages, Hashtable & map) {
 
     TPage latestPage = -1;
-    for (int i = currentPageNumber + 1; i++; i < numberOfPages) {
+    for (int i = currentPageNumber + 1; i < numberOfPages; i++) {
 
         if (map.count(pages[i]) != 0) {
 
@@ -94,4 +103,19 @@ TPage find_latest_page (TPage* pages, int currentPageNumber, int numberOfPages, 
         }
     }
     return latestPage;
+}
+
+bool seek_in_future (TPage* pages, int currentPageNumber, int numberOfPages, size_t listSize) {
+
+    // cout << pages[currentPageNumber];
+    for (int i = currentPageNumber + 1; /*(i < currentPageNumber + 1 + listSize) && */(i < numberOfPages); i++) {
+
+        if (pages[i] == pages[currentPageNumber]) {
+
+            // cout << " true" << endl;
+            return true;
+        }
+    }
+    // cout << " false" << endl;
+    return false;
 }

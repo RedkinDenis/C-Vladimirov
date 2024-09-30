@@ -41,19 +41,18 @@ int count_hits_2Q () {
     Q2HashTables hashTables;    
 
     int cacheSize = 0;
-    scanf("%d", &cacheSize);
+    cin >> cacheSize;
 
     int pageCount = 0;
-    scanf("%d", &pageCount);
+    cin >> pageCount;
 
     lists.set_lists_size(cacheSize);
-    
 
     if (cacheSize > 3) {
 
         for (int i = 0; i < pageCount; i++) {
 
-            scanf("%d", &page);
+            cin >> page;
             new_page_2Q(hashTables, lists, page, hits);
         }
     }
@@ -62,7 +61,7 @@ int count_hits_2Q () {
 
         for (int i = 0; i < pageCount; i++) {
 
-            scanf("%d", &page);
+            cin >> page;
             new_page_LRU(hashTables.mapAm, lists.lstAm, page, hits);
         }
     }
