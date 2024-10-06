@@ -1,5 +1,4 @@
-#ifndef GEOMETRY_ELEMS_HPP
-#define GEOMETRY_ELEMS_HPP
+#pragma once
 
 #include <cmath>
 #include <stdio.h>
@@ -54,6 +53,11 @@ struct point_t {
 
         point_t result = point_t(x * num, y * num, z * num);
         return result;
+    }
+
+    float max_coord () { 
+    
+        return std::max(std::max(x, y), z);
     }
 };
 
@@ -176,6 +180,8 @@ struct triangle_t {
 
     surface_t surfABC;
 
+    int triangleNumber = 0;
+
     triangle_t() {}
 
     triangle_t(point_t &a, point_t &b, point_t &c) {
@@ -190,13 +196,9 @@ struct triangle_t {
     }
 
     bool cross_with_line (line_t &line, std::pair<point_t, point_t> &crossPoints) {
-
-        // printf("\ncross triangle with line\n");
         
         bool result;
 
-        // point_t nanP(NAN, NAN, NAN);
-        // std::pair<point_t, point_t> crossPoints;
         int i = 0;
 
         point_t crossPoint;
@@ -236,14 +238,6 @@ struct triangle_t {
 
         #undef CROSS_WITH_LINE
 
-
-        // printf("\nCROSS POINTS DUMP---------------\n");
-        // crossPoints.first.print();
-        // crossPoints.second.print();
-        // printf("\ni - %d\n", i);
-        // printf("\nCROSS POINT DUMP END------------\n");
-
-
         if (i != 0) {
 
             return true;
@@ -258,10 +252,15 @@ struct triangle_t {
         AB.print(); BC.print(); AC.print(); 
         surfABC.dump();
     }
+
+    float max_coord () {
+
+        return std::max(std::max(A.max_coord(), B.max_coord()), C.max_coord());
+    }
 };
 
 bool is_num_in_internal (float &x, float &a, float &b);
 
 bool is_triangles_cross (triangle_t &t1, triangle_t &t2);
 
-#endif // GEOMETRY_ELEMS_HPP
+bool is_num_in_internal (float &x, long a, long b);

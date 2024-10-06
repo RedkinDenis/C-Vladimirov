@@ -4,6 +4,26 @@
 
 static void solve_eq_system (linear_equation &eq1, linear_equation &eq2, float &x0, float &y0);
 
+bool is_num_in_internal (float &x, long a, long b) {
+
+    if (a > b) {
+
+        // printf("\n1\n");
+        return a >= x && x >= b;
+    }
+    else if (a < b) {
+
+        // printf("\n2\n");
+        return x >= a && b >= x;
+    }
+    else {
+
+        // printf("\n3\n");
+        return std::fabs(x - a) < flt_tolerance;
+    }
+}
+
+
 bool isZero (float x) {
 
     return std::fabs(x) < flt_tolerance;
