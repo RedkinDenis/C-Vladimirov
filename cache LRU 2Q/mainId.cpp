@@ -14,7 +14,7 @@ int main() {
     std::vector<TPage> data;
     idealCache cache(sz);
 
-    std::cout << "cache max_size - " << cache.cache.max_size() << std::endl;
+    // std::cout << "cache max_size - " << cache.cache.max_size() << std::endl;
 
     int num;
     std::cin >> num;

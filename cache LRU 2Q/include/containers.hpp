@@ -4,7 +4,8 @@
 #include <unordered_map>
 #include <list>
 
-#include "LRU-2Q.hpp"
+// #include "LRU-2Q.hpp"
+typedef int TPage;
 
 using namespace std;
 

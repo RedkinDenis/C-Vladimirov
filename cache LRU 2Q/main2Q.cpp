@@ -5,5 +5,6 @@ using namespace std;
 
 int main() {
     
-    cout << count_hits_2Q() << endl;
+    Lru2qCache cache;
+    cout << cache.count_hits_2Q() << endl;
 }
