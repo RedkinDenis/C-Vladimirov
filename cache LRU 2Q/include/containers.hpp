@@ -1,10 +1,8 @@
-#ifndef CONTAINERS_HPP
-#define CONTAINERS_HPP
+#pragma once
 
 #include <unordered_map>
 #include <list>
 
-// #include "LRU-2Q.hpp"
 typedef int TPage;
 
 using namespace std;
@@ -17,5 +15,3 @@ struct cacheList {
 };
 
 typedef unordered_map<TPage, List::iterator> Hashtable;
-
-#endif // CONTAINERS_HPP

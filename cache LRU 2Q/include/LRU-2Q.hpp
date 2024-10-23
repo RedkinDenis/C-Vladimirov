@@ -1,12 +1,11 @@
-#ifndef LRU_2Q_H
-#define LRU_2Q_H
+#pragma once
 
 #include <iostream>
 
 #include "containers.hpp"
 #include "LRU.hpp"
 
-// typedef int TPage;
+#define LRU2Q_MIN_CACHE_SIZE 3
 
 struct Q2Lists {
 
@@ -16,17 +15,16 @@ struct Q2Lists {
 
     inline void set_lists_size (size_t cacheSize) {
 
-        if (cacheSize > 3) {
+        if (cacheSize > LRU2Q_MIN_CACHE_SIZE) {
             
             lstAm.listSize = cacheSize / 2;        
             lstA1In.listSize = (cacheSize - lstAm.listSize) / 2;
             lstA1Out.listSize = cacheSize - lstAm.listSize - lstA1In.listSize;
         }
         else {
-
+            
             lstAm.listSize = cacheSize;
         }
-        // printf ("\nAmSize - %d INSize - %d OutSize - %d\n", lstAm.listSize, lstA1In.listSize, lstA1Out.listSize);
     }
 };
 
@@ -57,7 +55,7 @@ class Lru2qCache {
 
             lists.set_lists_size(cacheSize);
 
-            if (cacheSize > 3) {
+            if (cacheSize > LRU2Q_MIN_CACHE_SIZE) {
 
                 for (int i = 0; i < pageCount; i++) {
 
@@ -71,7 +69,7 @@ class Lru2qCache {
                 for (int i = 0; i < pageCount; i++) {
 
                     std::cin >> page;
-                    new_page_LRU(hashTables.mapAm, lists.lstAm, page, hits);
+                    lookup_update_LRU(hashTables.mapAm, lists.lstAm, page, hits);
                 }
             }
 
@@ -82,80 +80,74 @@ class Lru2qCache {
     
         void lookup_update (TPage elem, int & hits) {
 
-            // printf("elem - %d ", elem);
             if (hashTables.mapAm.count(elem) == 0) { 
 
                 if (hashTables.mapIn.count(elem) == 0) {
 
                     if (hashTables.mapOut.count(elem) == 0) {
                     
-                        // printf("PUSH TO IN ");
                         if (lists.lstA1In.listSize == lists.lstA1In.lst.size()) {
 
                             if (lists.lstA1Out.lst.size() == lists.lstA1Out.listSize) {
 
-                                hashTables.mapOut.erase(lists.lstA1Out.lst.back());
-                                lists.lstA1Out.lst.pop_back();
+                                delete_from_cache(lists.lstA1Out, hashTables.mapOut);
                             }
 
-                            // printf("MOVE FROM IN TO OUT ");
-                            lists.lstA1Out.lst.push_front(lists.lstA1In.lst.back());
-                            hashTables.mapOut.insert({lists.lstA1In.lst.back(), lists.lstA1Out.lst.begin()});
+                            add_to_cache(lists.lstA1Out, hashTables.mapOut, lists.lstA1In.lst.back());
 
-                            hashTables.mapIn.erase(lists.lstA1In.lst.back());
-                            lists.lstA1In.lst.pop_back();
+                            delete_from_cache(lists.lstA1In, hashTables.mapIn);
                         }
-                        lists.lstA1In.lst.push_front(elem);
-                        hashTables.mapIn.insert({elem, lists.lstA1In.lst.begin()});
+                        
+                        add_to_cache(lists.lstA1In, hashTables.mapIn, elem);
+
+                        return;
                     }
 
-                    else {
+                    delete_from_cache(lists.lstA1Out, hashTables.mapOut, elem);
 
-                        // printf("MOVE FROM OUT TO AM ");
+                    if (lists.lstAm.lst.size() == lists.lstAm.listSize) {
 
-                        lists.lstA1Out.lst.erase(hashTables.mapOut.find(elem)->second);
-                        hashTables.mapOut.erase(elem);
-
-                        if (lists.lstAm.lst.size() == lists.lstAm.listSize) {
-
-                            hashTables.mapAm.erase(lists.lstAm.lst.back());
-                            lists.lstAm.lst.pop_back();
-                        }
-
-                        lists.lstAm.lst.push_front(elem);
-                        hashTables.mapAm.insert({elem, lists.lstAm.lst.begin()});
+                        delete_from_cache(lists.lstAm, hashTables.mapAm);
                     }
+
+                    add_to_cache(lists.lstAm, hashTables.mapAm, elem);
+
+                    return;
                 }
-
-                else {
-
-                    hits += 1;
-
-                    // printf("MOVE FROM IN TO IN ");
-
-                    lists.lstA1In.lst.erase(hashTables.mapIn.find(elem)->second);
-                    hashTables.mapIn.erase(elem);
-
-                    lists.lstA1In.lst.push_front(elem);
-                    hashTables.mapIn.insert({elem, lists.lstA1In.lst.begin()});
-                }
-            }
-
-            else {
 
                 hits += 1;
 
-                // printf("MOVE FROM AM TO AM ");
+                delete_from_cache(lists.lstA1In, hashTables.mapIn, elem);
 
-                lists.lstAm.lst.erase(hashTables.mapAm.find(elem)->second);
-                hashTables.mapAm.erase(elem);
+                add_to_cache(lists.lstA1In, hashTables.mapIn, elem);
 
-                lists.lstAm.lst.push_front(elem);
-                hashTables.mapAm.insert({elem, lists.lstAm.lst.begin()});
+                return;
             }
+
+            hits += 1;
+
+            delete_from_cache(lists.lstAm, hashTables.mapAm, elem);
+
+            add_to_cache(lists.lstAm, hashTables.mapAm, elem);
+        }
+
+        void add_to_cache (cacheList &list, Hashtable &map, TPage elem) {
+
+            list.lst.push_front(elem);
+            map.insert({elem, list.lst.begin()});
+        }
+
+        // delete by search in map
+        void delete_from_cache (cacheList &list, Hashtable &map, TPage elem) {
+
+            list.lst.erase(map.find(elem)->second);
+            map.erase(elem);
+        }
+
+        // delete from list's tail
+        void delete_from_cache (cacheList &list, Hashtable &map) {
+
+            map.erase(list.lst.back());
+            list.lst.pop_back();
         }
 };
-
-// int count_hits_2Q ();
-
-#endif // LRU_2Q_H

@@ -5,10 +5,6 @@ project(lru2q)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMake_CXX_Compiler g++)
-
-# enable_testing()
-
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 include_directories(${INCLUDE_DIR})
 
@@ -17,18 +13,11 @@ include_directories(${INCLUDE_DIR})
 
 SET(SRCS1
     src/LRU.cpp
-    # src/LRU-2Q.cpp
 )
 
-# SET(SRCS2
-#     src/ideal_cache.cpp
-# )
-
 add_library(lru2Q STATIC ${SRCS1})
-# add_library(lruId STATIC ${SRCS2})
 
-add_executable(lru2q.x main2Q.cpp)
+add_executable(lru2q.x main2Q.cpp)                                                         
 target_link_libraries(lru2q.x lru2Q)
 
 add_executable(lruId.x mainId.cpp)
-# target_link_libraries(lruId.x lruId)
